@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1010"><meta name="description" content="DEADZONE — 荒廃した隔離都市で生き抜く、3DゾンビサバイバルFPS。5段階の感染体、武器購入、能力強化。">
+  <title>DEADZONE — 末日戦線</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/mobile.css"><link rel="stylesheet" href="css/tactical.css">
+  <script defer src="js/vendor/three.min.js"></script>
+  <script defer src="js/urban-details.js"></script><script defer src="js/zombie-rig.js"></script><script defer src="js/world.js"></script><script defer src="js/combat-fx.js"></script><script defer src="js/tactical.js"></script><script defer src="js/game.js"></script>
+</head>
+<body>
+  <div id="game-world" aria-label="荒廃した隔離都市の3Dゲーム画面"></div>
+  <div class="cinema-grain" aria-hidden="true"></div><div class="vignette" aria-hidden="true"></div>
+  <div id="damage-flash" aria-hidden="true"></div>
+  <header class="site-header" id="site-header">
+    <a class="brand" href="./" aria-label="DEADZONE ホーム"><span class="brand-symbol">D<span>／</span></span><span>DEADZONE<small>末 日 戦 線</small></span></a>
+    <nav aria-label="メインメニュー"><button class="nav-link active" data-action="home">サバイバル <span>01</span></button><button class="nav-link" data-action="shop">武器庫 <span>02</span></button><button class="nav-link" data-action="bestiary">感染体図鑑 <span>03</span></button></nav>
+    <div class="header-tools"><button id="sound-toggle" class="tool-button" title="サウンドの切り替え" aria-label="サウンドを有効にする">♪ <span>SOUND OFF</span></button><button id="quality-toggle" class="tool-button" title="ULTRA画質：フル解像度・4Kシャドウ">◈ <span id="quality-label">ULTRA</span></button><span class="online-dot"></span></div>
+  </header>
+  <main id="main-menu">
+    <section class="hero-copy" aria-labelledby="game-title">
+      <div class="eyebrow"><span class="signal-dot"></span> QUARANTINE PROTOCOL <span class="protocol-number">// 07</span></div>
+      <p class="hero-kicker">生存は、選択ではない。</p>
+      <h1 id="game-title">DEAD<span>ZONE<span class="title-dot">.</span></span></h1>
+      <div class="hero-subtitle"><span class="orange-line"></span> 末日戦線 <span class="subtitle-en">THE LAST LINE</span></div>
+      <p class="hero-description">文明が消えた街で、最後の一発を信じろ。<br>迫り来る感染体。進化する脅威。<br>奪った報酬で武装し、次の夜を生き延びろ。</p>
+      <button id="start-button" class="primary-button"><span class="play-icon">▷</span><span>戦線に降り立つ<small>DEPLOY / STORM OPERATIONS</small></span><span class="button-arrow">↗</span></button>
+      <button class="guide-button" data-action="guide"><span>⊞</span> 操作ガイド <span class="guide-line"></span> HOW TO SURVIVE</button>
+      <div class="save-label"><span class="tiny-dot"></span> 進行状況はこの端末に自動保存</div>
+    </section>
+    <aside class="sector-panel" aria-label="作戦区域情報"><div class="sector-top"><span class="live-tag">LIVE FEED</span><span>CAM_007</span></div><div class="sector-corner"></div><div class="sector-coordinates">35° 40′ 12.8″ N<br>139° 42′ 06.1″ E</div><div class="sector-bottom"><span class="sector-label">作戦区域 / OPERATION AREA</span><h2>灰燼の街区</h2><div class="sector-meta">SECTOR 07 <span>● 汚染レベル：極度</span></div></div></aside>
+    <section class="feature-strip" aria-label="ゲームの特徴"><article><span class="feature-number">01 /</span><div><h3><button data-action="bestiary" aria-label="感染体図鑑を開く">5段階の脅威 ↗</button></h3><p>FIVE TIERS. NO MERCY.</p></div><span class="feature-icon threat-icon">▥</span></article><article><span class="feature-number">02 /</span><div><h3><button data-action="shop" aria-label="武器庫を開く">進化する武器庫 ↗</button></h3><p>UPGRADE. ADAPT. SURVIVE.</p></div><span class="feature-icon">⌁</span></article><article><span class="feature-number">03 /</span><div><h3><button data-action="guide" aria-label="操作ガイドを開く">終わりなき生存戦 ↗</button></h3><p>HOW LONG WILL YOU LAST?</p></div><span class="feature-icon">◎</span></article></section>
+    <footer class="menu-footer"><span><span class="tiny-dot"></span> SYSTEM ONLINE <b> · </b> WEBGL 3D EXPERIENCE</span><span>HEADPHONES RECOMMENDED <span class="footer-cross">＋</span></span></footer>
+  </main>
+  <section id="game-hud" class="hidden" aria-label="プレイ状況">
+    <div class="hud-top"><div class="hud-brand">DZ<span> / SECTOR 07</span></div><div class="wave-display"><small>生存ウェーブ</small><b id="wave-value">01</b><span id="enemies-value">感染体 0</span></div><div class="wallet-display"><small>所持金</small><b>₡ <span id="money-value">0</span></b><button id="shop-button">武器庫 <kbd>B</kbd></button><button id="touch-settings-button" class="touch-only" aria-label="タッチ操作設定">⚙</button><button id="pause-button" aria-label="一時停止">Ⅱ</button></div></div>
+    <div id="wave-banner" class="wave-banner"></div><div id="crosshair" aria-hidden="true"><i></i><i></i><i></i><i></i><span></span></div><div id="hit-marker" aria-hidden="true">╳</div>
+    <div id="kill-feed" aria-live="polite"></div>
+    <aside id="contract-panel" class="contract-panel"><small>FIELD CONTRACT <span id="contract-reward">₡ 160</span></small><div><b id="contract-label">頭部を狙え</b><span id="contract-progress">0 / 2</span></div><div class="contract-track"><i id="contract-fill"></i></div></aside>
+    <div id="streak-indicator" class="streak-indicator hidden"><b id="streak-value">2</b><span>CHAIN KILL</span><div><i id="streak-time"></i></div></div>
+    <div id="treatment-progress" class="treatment-progress hidden"><span>✚ 治療中 <b id="treatment-time">2.0s</b></span><div><i id="treatment-fill"></i></div><small>被弾すると中断</small></div>
+    <div id="scope-overlay" class="scope-overlay hidden" aria-hidden="true"><i></i><span>M110 · PRECISION OPTIC</span></div>
+    <div class="tactical-controls"><button id="tactical-grenade" aria-label="手榴弾を投げる"><span>◉</span><small>手榴弾 <kbd>G</kbd></small><b id="grenade-count">2</b></button><button id="tactical-medkit" aria-label="回復キットを使う"><span>✚</span><small>治療 <kbd>H</kbd></small><b id="medkit-count">1</b></button></div>
+    <aside class="radar-panel"><canvas id="radar" width="220" height="220" aria-label="周辺40メートルの感染体レーダー"></canvas><span>MOTION TRACKER / 40M</span></aside>
+    <div class="hud-bottom"><div class="health-panel"><small>＋ VITAL STATUS</small><div><b id="health-value">100</b><span id="max-health-value">/ 100</span></div><div class="health-track"><i id="health-bar"></i></div><span id="armor-value">ARMOR 0%</span></div><div class="hud-hints"><span><kbd>W A S D</kbd> 移動</span><span><kbd>R</kbd> リロード</span><span><kbd>B</kbd> 武器庫</span><span><kbd>ESC</kbd> 停止</span></div><div class="ammo-panel"><small id="weapon-label">M9 SERVICE PISTOL</small><div><b id="ammo-value">12</b><span> / ∞</span></div><span id="reload-status">9 × 19 MM · SEMI AUTO</span></div></div>
+    <div id="mobile-controls">
+      <div id="look-pad" aria-label="スワイプして照準を動かす"></div>
+      <div id="move-pad" aria-label="移動スティック。上へ大きく倒すとダッシュ"><span class="joystick-arrows" aria-hidden="true">⌃</span><div id="move-knob"></div><small>MOVE</small></div>
+      <button id="mobile-sprint" class="touch-action" aria-label="ダッシュ切り替え" aria-pressed="false"><span>»</span><small>ダッシュ</small></button>
+      <button id="mobile-aim" class="touch-action" aria-label="精密照準切り替え" aria-pressed="false"><span>⌖</span><small>照準</small></button>
+      <button id="mobile-reload" class="touch-action" aria-label="リロード"><span>↻</span><small>リロード</small></button>
+      <button id="mobile-fire" aria-label="長押しで射撃、押したままスライドで照準"><span class="fire-reticle">◎</span><small>FIRE</small></button>
+      <button id="mobile-shop" class="mobile-armory"><span>▣</span> 補給・武器庫</button>
+      <button id="mobile-switch" aria-label="購入済み武器を切り替え">⇄ <span>武器切替</span></button>
+      <span class="touch-hint">右スワイプで照準 · 射撃ボタン上でも照準操作</span>
+    </div>
+  </section>
+  <div id="overlay" class="overlay hidden"><section id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><header class="modal-header"><div><span id="modal-eyebrow">DEADZONE / FIELD MANUAL</span><h2 id="modal-title"></h2></div><button id="modal-close" aria-label="閉じる">✕</button></header><div id="modal-content"></div></section></div>
+  <div id="toast" role="status"></div>
+  <div id="loading-screen"><span class="loading-mark">DZ<span>.</span></span><span id="loading-text">隔離区域を構築中</span><div class="loading-track"><i></i></div><small>INITIALIZING QUARANTINE PROTOCOL</small></div>
+</body>
+</html>
