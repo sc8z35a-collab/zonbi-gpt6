@@ -9,7 +9,8 @@ window.DZZombieRig = function({T,scene,tiers,mat,box,textureCanvas,rand,metal}) 
   const clamp=T.MathUtils.clamp;
   const ease=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
   function joint(parent,x,y,z){const g=new T.Group();g.position.set(x,y,z);parent.add(g);return g;}
-  function oval(parent,m,rx,ry,rz,x=0,y=0,z=0){const mesh=new T.Mesh(new T.SphereGeometry(1,24,18),m);mesh.scale.set(rx,ry,rz);mesh.position.set(x,y,z);mesh.castShadow=mesh.receiveShadow=true;parent.add(mesh);return mesh;}
+  const unitSphere=new T.SphereGeometry(1,24,18);unitSphere.userData.shared=true;
+  function oval(parent,m,rx,ry,rz,x=0,y=0,z=0){const mesh=new T.Mesh(unitSphere,m);mesh.scale.set(rx,ry,rz);mesh.position.set(x,y,z);mesh.castShadow=mesh.receiveShadow=true;parent.add(mesh);return mesh;}
   function limb(parent,m,top,bottom,length,x=0,y=0,z=0){const mesh=new T.Mesh(new T.CylinderGeometry(top,bottom,length,20,4),m);mesh.position.set(x,y-length/2,z);mesh.castShadow=mesh.receiveShadow=true;parent.add(mesh);return mesh;}
   function stitch(parent,m,x,y,z,count=7,spacing=.025){for(let i=0;i<count;i++)box(.006,.014,.005,m,x+i*spacing,y,z,parent);}
   function create(tierIndex,x,z){
@@ -53,13 +54,13 @@ window.DZZombieRig = function({T,scene,tiers,mat,box,textureCanvas,rand,metal}) 
     return {root,torso,head,limbs,tier:tierIndex,hp:t.hp,maxHp:t.hp,speed:t.speed,damage:t.damage,scale:t.scale,phase,attack:0,rig:{pelvis,neck,jaw,hips,knees,feet,shoulders,elbows,wrists,fingers},anim:{gait:phase,blend:0,variant:rand(.75,1.2),asym:rand(-1,1),hit:0,hitHead:false,hitSide:1,attackTime:-1,attackHand:0,attackDuration:1.15,impactFired:false,deathTime:0,deathVariant:0,lastX:x,lastZ:z}}
   }
   function attack(e){const a=e.anim;if(a.attackTime>=0)return;a.attackTime=0;a.attackHand=1-a.attackHand;a.attackDuration=e.tier===1?.86:e.tier>=3?1.35:1.12;a.impactFired=false;}
-  function hit(e,head,side=1){e.anim.hit=1;e.anim.hitHead=head;e.anim.hitSide=side;if(head&&e.tier<3&&e.anim.attackTime>=0&&e.anim.attackTime<e.anim.attackDuration*.38)e.anim.attackTime=-1;}
-  function die(e,head){e.anim.deathTime=0;e.anim.deathVariant=head?0:Math.floor(rand(1,3));e.anim.attackTime=-1;e.anim.deathRotations=new Map();e.root.traverse(o=>{if(o.isGroup)e.anim.deathRotations.set(o,o.rotation.clone());});}
+  function hit(e,head,side=1){e.anim.hit=1;e.anim.hitHead=!!head;e.anim.hitSide=side<0?-1:1;if(head&&e.tier<3&&e.anim.attackTime>=0&&e.anim.attackTime<e.anim.attackDuration*.38)e.anim.attackTime=-1;}
+  function die(e,head){e.rig.pelvis.rotation.y=0;e.rig.pelvis.position.x=0;if(!head)e.rig.pelvis.rotation.z=0;e.anim.deathTime=0;e.anim.deathVariant=head?0:Math.floor(rand(1,3));e.anim.attackTime=-1;}
   function animate(e,time,moving=true,dt=1/60){
     const a=e.anim,r=e.rig,runner=e.tier===1,heavy=e.tier>=3;
     const distance=Math.hypot(e.root.position.x-a.lastX,e.root.position.z-a.lastZ)/e.scale;a.lastX=e.root.position.x;a.lastZ=e.root.position.z;
     a.gait+=distance/(runner?1.15:.87)*Math.PI*2;a.blend=smooth(a.blend,moving&&distance>.00001?1:0,7,dt);
-    const phase=a.gait,blend=a.blend,breath=Math.sin(time*2.6+e.phase),limp=(e.hp<e.maxHp*.35?1.6:1)*(runner?.02:.13)*a.variant;
+    if(a.gait>1e6)a.gait%=Math.PI*2;const phase=a.gait,blend=a.blend,breath=Math.sin(time*2.6+e.phase),limp=(e.hp<e.maxHp*.35?1.6:1)*(runner?.02:.13)*a.variant;
     let strike=0,anticipation=0,recovery=0,impact=false;
     if(a.attackTime>=0){a.attackTime+=dt;const p=a.attackTime/a.attackDuration;anticipation=ease(p/.34)*(1-ease((p-.32)/.11));strike=ease((p-.31)/.16)*(1-ease((p-.56)/.32));recovery=ease((p-.55)/.4);if(p>=.46&&!a.impactFired){impact=true;a.impactFired=true;}if(p>=1)a.attackTime=-1;}
     a.hit=Math.max(0,a.hit-dt*(heavy?4.5:3.1));const recoil=Math.sin(a.hit*Math.PI)*a.hit;
